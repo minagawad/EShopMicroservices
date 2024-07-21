@@ -1,27 +1,31 @@
-﻿
-namespace Catalog.API.Products.CreatProduct
-{
+﻿using Catalog.API.Products.CreatProduct;
 
-    public record CreatProductRequest(string Name, List<string> Category, string Description, string ImageFile, decimal Price);
-    public record CreatProductRespnse(Guid Id);
-    public class CreatProuctEndPoint : ICarterModule
+namespace Catalog.API.Products.CreateProduct;
+
+public record CreateProductRequest(string Name, List<string> Category, string Description, string ImageFile, decimal Price);
+
+public record CreateProductResponse(Guid Id);
+
+public class CreateProductEndpoint : ICarterModule
+{
+    public void AddRoutes(IEndpointRouteBuilder app)
     {
-        public void AddRoutes(IEndpointRouteBuilder app)
-        {
-            app.MapPost("/Products", async (CreatProductRequest request, ISender sender) =>
+        app.MapPost("/products",
+            async (CreateProductRequest request, ISender sender) =>
             {
                 var command = request.Adapt<CreatProductCommand>();
+
                 var result = await sender.Send(command);
-                var response = result.Adapt<CreatProductRespnse>();
-                return Results.Created($"/Products/{response.Id}", response);
+
+                var response = result.Adapt<CreateProductResponse>();
+
+                return Results.Created($"/products/{response.Id}", response);
 
             })
-            .WithName("CreatProduct")
-            .Produces<CreatProductRespnse>(StatusCodes.Status201Created)
-            .ProducesProblem(StatusCodes.Status400BadRequest)
-            .WithSummary("Creat Product")
-            .WithDescription("Crat Product");
-        }
+        .WithName("CreateProduct")
+        .Produces<CreateProductResponse>(StatusCodes.Status201Created)
+        .ProducesProblem(StatusCodes.Status400BadRequest)
+        .WithSummary("Create Product")
+        .WithDescription("Create Product");
     }
-
 }
