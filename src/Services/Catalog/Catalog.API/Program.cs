@@ -1,4 +1,6 @@
 using Catalog.API.Products.CreateProduct;
+using Catalog.API.Products.GetProductById;
+using Catalog.API.Products.GetProducts;
 using Marten;
 using System.Reflection;
 var builder = WebApplication.CreateBuilder(args);
@@ -11,11 +13,14 @@ builder.Services.AddMediatR(config =>
 //builder.Services.AddValidatorsFromAssembly(assembly);
 
 builder.Services.AddCarter();
-//builder.Services.AddCarter(configurator: c =>
-//{
+builder.Services.AddCarter(configurator: c =>
+{
    
-//    c.WithModule<CreateProductEndpoint>();
-//    });
+  c.WithModule<CreateProductEndpoint>();
+  c.WithModule<GetProductsEndPoint>();
+  c.WithModule<GetProductByIdEndPoint>();
+
+});
 
 builder.Services.AddMarten(opts=>
 {
