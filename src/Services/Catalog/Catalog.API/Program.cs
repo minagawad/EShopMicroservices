@@ -1,6 +1,9 @@
-using Catalog.API.Products.CreateProduct;
-using Catalog.API.Products.GetProductById;
-using Catalog.API.Products.GetProducts;
+using Catalog.API.Product.CreateProduct;
+using Catalog.API.Product.GetProductByCategory;
+using Catalog.API.Product.GetProductById;
+using Catalog.API.Product.GetProducts;
+using Catalog.API.Product.UpdateProduct;
+using Catalog.API.Products.DeleteProduct;
 using Marten;
 using System.Reflection;
 var builder = WebApplication.CreateBuilder(args);
@@ -19,6 +22,9 @@ builder.Services.AddCarter(configurator: c =>
   c.WithModule<CreateProductEndpoint>();
   c.WithModule<GetProductsEndPoint>();
   c.WithModule<GetProductByIdEndPoint>();
+  c.WithModule<GetProductByCategoryEndPoint>();
+  c.WithModule<UpdateProductEndPoint>();
+  c.WithModule<DeleteProductEndPoint>();
 
 });
 

@@ -2,7 +2,7 @@
 using Catalog.API.Models;
 using Marten;
 
-namespace Catalog.API.Products.CreatProduct
+namespace Catalog.API.Product.CreatProduct
 {
     public record CreatProductCommand(string Name, List<string> Category, string Description, string ImageFile, decimal Price): ICommand<CreatProductResult>;
     public record CreatProductResult(Guid Id);
@@ -11,7 +11,7 @@ namespace Catalog.API.Products.CreatProduct
 
         public async Task<CreatProductResult> Handle(CreatProductCommand command,  CancellationToken cancellationToken)
         {
-            var product = new Product()
+            var product = new Models.Product()
             {
                 Name = command.Name,
                 Category = command.Category,

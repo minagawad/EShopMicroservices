@@ -2,9 +2,9 @@
 using Catalog.API.Models;
 using Marten;
 
-namespace Catalog.API.Products.GetProducts
+namespace Catalog.API.Product.GetProducts
 {
-    public record GetProductsResult(IEnumerable<Product> Products);
+    public record GetProductsResult(IEnumerable<Models.Product> Products);
     public record GeProuctsQuery() : IQuery<GetProductsResult>;
     public class GetProductsQueryHandler(IDocumentSession session,ILogger<GetProductsQueryHandler> logger) : IQueryHandler<GeProuctsQuery, GetProductsResult>
     {

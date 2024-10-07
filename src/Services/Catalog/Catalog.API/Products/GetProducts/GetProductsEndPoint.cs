@@ -3,9 +3,9 @@ using Catalog.API.Models;
 using Mapster;
 using Microsoft.AspNetCore.Http.HttpResults;
 
-namespace Catalog.API.Products.GetProducts
+namespace Catalog.API.Product.GetProducts
 {
-    public record GetProductsResponse(IEnumerable<Product> Products);
+    public record GetProductsResponse(IEnumerable<Models.Product> Products);
     public class GetProductsEndPoint : ICarterModule
     {
         public void AddRoutes(IEndpointRouteBuilder app)

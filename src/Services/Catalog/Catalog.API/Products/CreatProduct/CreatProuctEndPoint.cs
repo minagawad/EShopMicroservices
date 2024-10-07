@@ -1,6 +1,6 @@
-﻿using Catalog.API.Products.CreatProduct;
+﻿using Catalog.API.Product.CreatProduct;
 
-namespace Catalog.API.Products.CreateProduct;
+namespace Catalog.API.Product.CreateProduct;
 
 public record CreateProductRequest(string Name, List<string> Category, string Description, string ImageFile, decimal Price);
 
@@ -22,10 +22,10 @@ public class CreateProductEndpoint : ICarterModule
                 return Results.Created($"/products/{response.Id}", response);
 
             })
-        .WithName("CreateProduct")
-        .Produces<CreateProductResponse>(StatusCodes.Status201Created)
-        .ProducesProblem(StatusCodes.Status400BadRequest)
-        .WithSummary("Create Product")
-        .WithDescription("Create Product");
+            .WithName("CreateProduct")
+            .Produces<CreateProductResponse>(StatusCodes.Status201Created)
+            .ProducesProblem(StatusCodes.Status400BadRequest)
+            .WithSummary("Create Product")
+            .WithDescription("Create Product");
     }
 }
