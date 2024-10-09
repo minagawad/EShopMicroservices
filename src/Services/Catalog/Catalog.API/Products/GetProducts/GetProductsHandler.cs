@@ -11,7 +11,7 @@ namespace Catalog.API.Product.GetProducts
         public async Task<GetProductsResult> Handle(GeProuctsQuery query, CancellationToken cancellationToken)
         {
             logger.LogInformation("GetProductQueryHanlder.Handel Called with {@Query}", query);
-            var products= await session.Query<Product>().ToListAsync();
+            var products= await session.Query<Models.Product>().ToListAsync();
             return new GetProductsResult(products);
         }
     }
