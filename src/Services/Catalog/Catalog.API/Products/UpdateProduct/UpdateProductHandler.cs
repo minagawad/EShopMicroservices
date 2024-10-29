@@ -1,7 +1,5 @@
 ﻿using BuildingBlock.CQRS;
 using Catalog.API.Exceptions;
-using Catalog.API.Models;
-using Catalog.API.Product.CreatProduct;
 using Marten;
 
 namespace Catalog.API.Product.UpdateProduct
@@ -26,7 +24,7 @@ namespace Catalog.API.Product.UpdateProduct
             product.ImageFile   = command.ImageFile;
             product.Price   = command.Price;
             session.Update(product);
-            await session.SaveChangesAsync();
+            await session.SaveChangesAsync(cancellationToken);
 
             return new UpdateProductResult(true);
 
