@@ -8,6 +8,8 @@ using Catalog.API.Products.DeleteProduct;
 using FluentValidation;
 using Marten;
 using System.Reflection;
+using BuildingBlock.Exceptions.Handler;
+
 var builder = WebApplication.CreateBuilder(args);
 var assembly = typeof(Program).Assembly;
 
@@ -20,20 +22,19 @@ builder.Services.AddValidatorsFromAssembly(assembly);
 builder.Services.AddCarter();
 builder.Services.AddCarter(configurator: c =>
 {
-   
-  c.WithModule<CreateProductEndpoint>();
-  c.WithModule<GetProductsEndPoint>();
-  c.WithModule<GetProductByIdEndPoint>();
-  c.WithModule<GetProductByCategoryEndPoint>();
-  c.WithModule<UpdateProductEndPoint>();
-  c.WithModule<DeleteProductEndPoint>();
-
+    c.WithModule<CreateProductEndpoint>();
+    c.WithModule<GetProductsEndPoint>();
+    c.WithModule<GetProductByIdEndPoint>();
+    c.WithModule<GetProductByCategoryEndPoint>();
+    c.WithModule<UpdateProductEndPoint>();
+    c.WithModule<DeleteProductEndPoint>();
 });
 
-builder.Services.AddMarten(opts=>
-{
-    opts.Connection(builder.Configuration.GetConnectionString("Database")!);
-}).UseLightweightSessions();
+builder.Services.AddMarten(opts => { opts.Connection(builder.Configuration.GetConnectionString("Database")!); })
+    .UseLightweightSessions();
+
+builder.Services.AddExceptionHandler<CustomExceptionHandler>();
+
 var app = builder.Build();
 app.MapCarter();
 app.Run();
