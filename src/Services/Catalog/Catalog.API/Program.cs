@@ -9,6 +9,7 @@ using FluentValidation;
 using Marten;
 using System.Reflection;
 using BuildingBlock.Exceptions.Handler;
+using Catalog.API.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 var assembly = typeof(Program).Assembly;
@@ -17,6 +18,7 @@ builder.Services.AddMediatR(config =>
 {
     config.RegisterServicesFromAssembly(assembly);
     config.AddOpenBehavior(typeof(ValidationBehavior<,>));
+    config.AddOpenBehavior(typeof(LoggingBehavior<,>));
 });
 builder.Services.AddValidatorsFromAssembly(assembly);
 builder.Services.AddCarter();
@@ -32,6 +34,8 @@ builder.Services.AddCarter(configurator: c =>
 
 builder.Services.AddMarten(opts => { opts.Connection(builder.Configuration.GetConnectionString("Database")!); })
     .UseLightweightSessions();
+if (builder.Environment.IsDevelopment())
+    builder.Services.InitializeMartenWith<CatalogInitialData>();
 
 builder.Services.AddExceptionHandler<CustomExceptionHandler>();
 
