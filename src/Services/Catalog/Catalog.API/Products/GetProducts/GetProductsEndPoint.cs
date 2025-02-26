@@ -1,19 +1,16 @@
-﻿
-using Catalog.API.Models;
-using Mapster;
-using Microsoft.AspNetCore.Http.HttpResults;
-
-namespace Catalog.API.Product.GetProducts
+﻿namespace Catalog.API.Product.GetProducts
 {
+    public record GetProductRequest(int? pageNumber = 1, int pageSize = 10);
     public record GetProductsResponse(IEnumerable<Models.Product> Products);
     public class GetProductsEndPoint : ICarterModule
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
 
-            app.MapGet("/Products", async (ISender sender) =>
+            app.MapGet("/Products", async ([AsParameters] GetProductRequest request, ISender sender) =>
             {
-                var result = await sender.Send(new GeProuctsQuery());
+                var query = request.Adapt<GeProuctsQuery>();
+                var result = await sender.Send(query);
                 var response = result.Adapt<GetProductsResponse>();
                 return Results.Ok(response);
             })

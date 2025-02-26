@@ -1,4 +1,6 @@
 using BuildingBlock.Behaviors;
+using BuildingBlock.Exceptions.Handler;
+using Catalog.API.Data;
 using Catalog.API.Product.CreateProduct;
 using Catalog.API.Product.GetProductByCategory;
 using Catalog.API.Product.GetProductById;
@@ -6,11 +8,9 @@ using Catalog.API.Product.GetProducts;
 using Catalog.API.Product.UpdateProduct;
 using Catalog.API.Products.DeleteProduct;
 using FluentValidation;
-using Marten;
-using System.Reflection;
-using BuildingBlock.Exceptions.Handler;
-using Catalog.API.Data;
 using HealthChecks.UI.Client;
+using Marten;
+using Weasel.Core;
 
 var builder = WebApplication.CreateBuilder(args);
 var assembly = typeof(Program).Assembly;
@@ -33,20 +33,23 @@ builder.Services.AddCarter(configurator: c =>
     c.WithModule<DeleteProductEndPoint>();
 });
 
-builder.Services.AddMarten(opts => 
-{ 
-    opts.Connection(builder.Configuration.GetConnectionString("Database")!); 
-}).UseLightweightSessions();
+builder.Services.AddMarten(opts =>
+{
+    opts.Connection(builder.Configuration.GetConnectionString("Database")!);
+    opts.AutoCreateSchemaObjects = AutoCreate.All;
+}).UseLightweightSessions().
+ApplyAllDatabaseChangesOnStartup();
 if (builder.Environment.IsDevelopment())
-    builder.Services.InitializeMartenWith<CatalogInitialData>();
+    builder.Services.InitializeMartenWith<CatalogInitialData>()
+        ;
 
 builder.Services.AddExceptionHandler<CustomExceptionHandler>();
 builder.Services.AddHealthChecks()
     .AddNpgSql(builder.Configuration.GetConnectionString("Database")!);
 var app = builder.Build();
-app.UseHealthChecks("/health",new Microsoft.AspNetCore.Diagnostics.HealthChecks.HealthCheckOptions
+app.UseHealthChecks("/health", new Microsoft.AspNetCore.Diagnostics.HealthChecks.HealthCheckOptions
 {
-    ResponseWriter=UIResponseWriter.WriteHealthCheckUIResponse
+    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
 });
 app.MapCarter();
 app.Run();
