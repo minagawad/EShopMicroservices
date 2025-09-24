@@ -1,5 +1,6 @@
 using BuildingBlock.Behaviors;
 using Carter;
+using Marten;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,7 +17,10 @@ builder.Services.AddMediatR(config =>
     config.AddBehavior(typeof(ValidationBehavior<,>));
     config.AddBehavior(typeof(LoggingBehavior<,>));
 });
-
+builder.Services.AddMarten(opts =>
+{
+    opts.Connection(builder.Configuration.GetConnectionString("Database")!);
+}).UseLightweightSessions();
 var app = builder.Build();
 
 app.MapCarter();
