@@ -10,10 +10,27 @@ using Catalog.API.Products.DeleteProduct;
 using FluentValidation;
 using HealthChecks.UI.Client;
 using Marten;
+using Microsoft.OpenApi.Models;
 using Weasel.Core;
 
 var builder = WebApplication.CreateBuilder(args);
 var assembly = typeof(Program).Assembly;
+
+// Add Swagger services
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "Catalog API",
+        Version = "v1",
+        Description = "Catalog service API for eShop microservices",
+        Contact = new OpenApiContact
+        {
+            Name = "Development Team"
+        }
+    });
+});
 
 builder.Services.AddMediatR(config =>
 {
@@ -40,13 +57,23 @@ builder.Services.AddMarten(opts =>
 }).UseLightweightSessions().
 ApplyAllDatabaseChangesOnStartup();
 if (builder.Environment.IsDevelopment())
-    builder.Services.InitializeMartenWith<CatalogInitialData>()
-        ;
+    builder.Services.InitializeMartenWith<CatalogInitialData>();
 
 builder.Services.AddExceptionHandler<CustomExceptionHandler>();
 builder.Services.AddHealthChecks()
     .AddNpgSql(builder.Configuration.GetConnectionString("Database")!);
 var app = builder.Build();
+
+// Configure Swagger middleware
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Catalog API V1");
+    });
+}
+
 app.UseHealthChecks("/health", new Microsoft.AspNetCore.Diagnostics.HealthChecks.HealthCheckOptions
 {
     ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
