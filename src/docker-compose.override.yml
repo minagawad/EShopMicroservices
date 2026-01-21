@@ -27,6 +27,7 @@ services:
       - postgres_basket:/var/lib/postgresql/data/ 
   distributedCache:
     container_name: distributedCache
+    image: redis:latest
     restart: always
     ports:
       - "6379:6379" 
